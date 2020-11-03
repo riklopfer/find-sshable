@@ -15,10 +15,16 @@ nmap
 brew install nmap
 ```
 
+```bash
+nmap --open -sT -p T:22 192.168.86.0/24
+
+arp -na | grep -i b8:27:eb
+```
+
 Instructions
 -------------
 
-Start from [here](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) to configure the WiFi on your raspberry pi. 
+If you will run this on Wifi (not ethernet), start from [here](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) to configure the WiFi on your raspberry pi. However, if you can connect to ethernet, I would recommend doing so, and you can skip this step. 
 
 As per [here](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md) add an empty `ssh` file to the root partition when you frist boot up. 
 

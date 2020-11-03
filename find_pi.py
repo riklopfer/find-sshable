@@ -6,7 +6,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import Optional, Iterator
+from typing import Optional, Iterator, List
 
 import sshconf
 
@@ -20,6 +20,14 @@ def get_ip_addr() -> ipaddress.IPv4Address:
         return ipaddress.ip_address(ipaddr.decode('utf8'))
 
   raise OSError("Could not find IP address! :(")
+
+
+def get_network() -> ipaddress.IPv4Network:
+  addr = get_ip_addr()
+  net_str = str(addr)
+  net_str = net_str[:net_str.rindex('.') + 1] + '0'
+  net_str += '/24'
+  return ipaddress.ip_network(net_str)
 
 
 """
@@ -36,17 +44,24 @@ HOST_IP_PAT = re.compile(f"Nmap scan report for ({HOST_RE}) \(({IP_RE})\)")
 class PiFinder(object):
   def __init__(self, local_ip: Optional[str] = None):
     if local_ip:
-      self.local_ip = local_ip
+      self.local_network = local_ip
     else:
-      self.local_ip = get_ip_addr()
-    self.logger.info("Using Local IP: %s", self.local_ip)
+      self.local_network = get_network()
+    self.logger.info("Using Local Network: %s", self.local_network)
 
   @property
   def logger(self):
     return logging.getLogger(self.__class__.__name__)
 
   def find_devices(self, ip_net: str):
-    proc = subprocess.run(["nmap", "-sn", str(ip_net)], capture_output=True)
+    # All hosts
+    # proc = subprocess.run(["nmap", "-sn", str(ip_net)], capture_output=True)
+    # Only hosts with open ssh ports
+    # nmap --host-timeout 3 --open -sT -p T:22 192.168.86.0/24
+    proc = subprocess.run(
+        ["nmap", "--host-timeout", "3", "--open", "-sT", "-p", "22",
+         str(ip_net)],
+        capture_output=True)
     # print(proc.stdout)
     out_str = proc.stdout.decode('utf8')
     self.logger.debug("nmap output:\n%s", out_str)
@@ -58,22 +73,19 @@ class PiFinder(object):
       if m:
         yield m.group(1), m.group(2)
 
-  def find(self, retries=10) -> str:
+  def find(self, retries=10) -> List[str]:
     for retry in range(retries):
       pi_addrs = list(self._find_all())
       if not pi_addrs:
         self.logger.info("No pi found... retrying %d/%d", retry + 1, retries)
         continue
 
-      if len(pi_addrs) > 1:
-        self.logger.warning("Found %d Pi's... returning the first.\n%s",
-                            len(pi_addrs), "\n".join(pi_addrs))
-      return pi_addrs[0]
+      return pi_addrs
 
     raise AssertionError("Could not find raspberry pi!!!")
 
   def _find_all(self) -> Iterator[str]:
-    name_ips = self.find_devices(f"{self.local_ip}/24")
+    name_ips = self.find_devices(f"{self.local_network}")
     for host, ip in name_ips:
       self.logger.debug("{:30}{:30}".format(host, ip))
       if 'raspberrypi' in host:
@@ -97,8 +109,17 @@ def main(argv):
 
   logger = logging.getLogger(program_name)
   pi_finder = PiFinder()
-  pi_ip = pi_finder.find()
-  logger.info("RASPBERRY PI IP: %s", pi_ip)
+  pi_addrs = pi_finder.find()
+  if len(pi_addrs) == 1:
+    pi_names = [args.name]
+  else:
+    pi_names = [f"{args.name}-{idx + 1}" for idx in range(len(pi_addrs))]
+
+  print(
+      "Found {} Pi's... They will be added to your ssh config as follows\n"
+      "{}".format(len(pi_addrs), "\n".join("\t".join(_)
+                                           for _ in zip(pi_addrs, pi_names)))
+  )
 
   # add it to your ssh config
   ssh_config_path = os.path.join(os.getenv("HOME", "/"), ".ssh", "config")
@@ -107,15 +128,16 @@ def main(argv):
   else:
     config = sshconf.empty_ssh_config_file()
 
-  host = config.host(args.name)
-  ssh_config_kwargs = dict(host=args.name, User="pi", HostName=pi_ip)
-  logger.info("Updated ssh Host entry for %s", args.name)
+  for addr, name in zip(pi_addrs, pi_names):
+    host = config.host(name)
+    ssh_config_kwargs = dict(host=name, User="pi", HostName=addr)
+    logger.info("Updated ssh Host entry for %s", name)
 
-  if host:
-    logger.warning("Overwriting ssh config entry: %s", host)
-    config.set(**ssh_config_kwargs)
-  else:
-    config.add(**ssh_config_kwargs)
+    if host:
+      logger.warning("Overwriting ssh config entry: %s", host)
+      config.set(**ssh_config_kwargs)
+    else:
+      config.add(**ssh_config_kwargs)
 
   config.write(ssh_config_path)
 
