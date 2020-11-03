@@ -1,6 +1,23 @@
 Headless Raspberry Pi
 ======================
 
+The idea is to stand up a headless raspberry pi that you can ssh into and do things on. 
+
+Requirements
+============
+
+Only works on MacOS for now... 
+
+nmap
+---
+
+```bash
+brew install nmap
+```
+
+Instructions
+-------------
+
 Start from [here](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) to configure the WiFi on your raspberry pi. 
 
 As per [here](https://www.raspberrypi.org/documentation/remote-access/ssh/README.md) add an empty `ssh` file to the root partition when you frist boot up. 
