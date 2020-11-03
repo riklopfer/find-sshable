@@ -61,5 +61,7 @@ COVID_PY=~/virtualenvs/covid-dash/bin/python ~/Git/riklopfer/riklopfer.github.io
 
 ```
 
-
+```bash
+grep CRON /var/log/syslog
+```
 
