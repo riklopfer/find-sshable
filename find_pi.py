@@ -70,6 +70,8 @@ class PiFinder(object):
                             len(pi_addrs), "\n".join(pi_addrs))
       return pi_addrs[0]
 
+    raise AssertionError("Could not find raspberry pi!!!")
+
   def _find_all(self) -> Iterator[str]:
     name_ips = self.find_devices(f"{self.local_ip}/24")
     for host, ip in name_ips:
@@ -108,7 +110,7 @@ def main(argv):
   host = config.host(args.name)
   ssh_config_kwargs = dict(host=args.name, User="pi", HostName=pi_ip)
   logger.info("Updated ssh Host entry for %s", args.name)
-  
+
   if host:
     logger.warning("Overwriting ssh config entry: %s", host)
     config.set(**ssh_config_kwargs)
