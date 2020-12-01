@@ -6,7 +6,8 @@ The idea is to stand up a headless raspberry pi that you can ssh into and do thi
 Requirements
 ============
 
-This has only been tested on MacOS, but there is no reason it shouldn't work on *nix. 
+This has only been tested on MacOS, but there is no reason it shouldn't work on *nix.
+ 
 nmap
 ---
 
