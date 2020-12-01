@@ -113,7 +113,9 @@ def main(argv):
   if len(pi_addrs) == 1:
     pi_names = [args.name]
   else:
-    pi_names = [f"{args.name}-{idx + 1}" for idx in range(len(pi_addrs))]
+    pi_names = [args.name]
+    pi_names.extend(f"{args.name}-{idx}"
+                    for idx in range(1, len(pi_addrs)))
 
   print(
       "Found {} Pi's... They will be added to your ssh config as follows\n"
@@ -124,7 +126,8 @@ def main(argv):
   # add it to your ssh config
   ssh_config_path = os.path.join(os.getenv("HOME", "/"), ".ssh", "config")
   if os.path.exists(ssh_config_path):
-    config = sshconf.SshConfigFile(ssh_config_path)
+    with open(ssh_config_path) as ifp:
+      config = sshconf.SshConfigFile(ifp)
   else:
     config = sshconf.empty_ssh_config_file()
 
