@@ -22,7 +22,7 @@ arp -na | grep -i b8:27:eb
 ```
 
 Instructions
--------------
+============
 
 If you will run this on Wifi (not ethernet), start from [here](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) to configure the WiFi on your raspberry pi. However, if you can connect to ethernet, I would recommend doing so, and you can skip this step. 
 
