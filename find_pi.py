@@ -37,8 +37,8 @@ Nmap scan report for philips-hue.lan (192.168.86.28)
 """
 IP_RE = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}"
 HOST_RE = r"\S+"
-IP_PAT = re.compile(f"Nmap scan report for ({IP_RE})")
-HOST_IP_PAT = re.compile(f"Nmap scan report for ({HOST_RE}) \(({IP_RE})\)")
+IP_PAT = re.compile(rf"Nmap scan report for ({IP_RE})")
+HOST_IP_PAT = re.compile(rf"Nmap scan report for ({HOST_RE}) \(({IP_RE})\)")
 
 
 class PiFinder(object):
