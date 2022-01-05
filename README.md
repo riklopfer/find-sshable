@@ -1,12 +1,12 @@
-Headless Raspberry Pi
-======================
+Find PI
+=======
 
-The idea is to stand up a headless raspberry pi that you can ssh into and do things on.
+Find SSH-able raspberry pi devices on your network. 
 
 Requirements
 ============
 
-This has only been tested on MacOS, but there is no reason it shouldn't work on *nix.
+This has only been tested on MacOS, but there is no reason it shouldn't work on \*nix.
 
 nmap
 ---
@@ -15,14 +15,24 @@ nmap
 brew install nmap
 ```
 
-```bash
-nmap --open -sT -p T:22 192.168.86.0/24
-
-arp -na | grep -i b8:27:eb
+```shell
+sudo apt-get install nmap
 ```
 
-Instructions
-============
+etc... 
+
+pip requirements
+-----------
+
+```shell
+pip install -r requirements.txt
+```
+
+
+Headless Raspberry Pi
+======================
+
+The idea is to stand up a headless raspberry pi that you can ssh into and do things on.
 
 If you will run this on Wifi (not ethernet), start
 from [here](https://www.raspberrypi.org/documentation/configuration/wireless/headless.md) to configure the WiFi on your
@@ -34,7 +44,7 @@ partition when you frist boot up.
 Locally run the following. This will find and add your Pi to the local ssh config.
 
 ```bash
-./find_pi.py
+./find_pi.py --ssh-prefix=raspberrypi
 ```
 
 ssh into it,
