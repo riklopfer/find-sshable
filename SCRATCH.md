@@ -6,11 +6,9 @@ https://www.raspberrypi.org/documentation/configuration/wireless/headless.md
 
 https://www.raspberrypi.org/documentation/remote-access/ssh/README.md
 
-
 https://www.raspberrypi.org/documentation/remote-access/ssh/unix.md
 
 https://www.raspberrypi.org/documentation/remote-access/ip-address.md
-
 
 ```
     5  sudo apt install git
@@ -53,8 +51,6 @@ python3 -m venv ~/virtualenvs/covid-dash
 ```
 
 git clone https://AXXS_TOKEN@github.com/riklopfer/riklopfer.github.io.git
-
-
 
 ```bash
 COVID_PY=~/virtualenvs/covid-dash/bin/python ~/Git/riklopfer/riklopfer.github.io/update_stuff.sh
