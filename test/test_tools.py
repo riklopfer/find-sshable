@@ -1,6 +1,3 @@
-from find_raspi import net
-
-
 def test_get_network():
     network = tools.get_network()
     assert network

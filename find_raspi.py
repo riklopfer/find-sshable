@@ -4,7 +4,6 @@ import collections
 import logging
 import os
 import sys
-import time
 from typing import Iterable, List
 
 from find_raspi import sshconf, net

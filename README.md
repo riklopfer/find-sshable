@@ -1,7 +1,7 @@
 Find PI
 =======
 
-Find SSH-able raspberry pi devices on your network. 
+Find SSH-able raspberry pi devices on your network.
 
 Requirements
 ============
@@ -19,7 +19,7 @@ brew install nmap
 sudo apt-get install nmap
 ```
 
-etc... 
+etc...
 
 pip requirements
 -----------
@@ -27,7 +27,6 @@ pip requirements
 ```shell
 pip install -r requirements.txt
 ```
-
 
 Headless Raspberry Pi
 ======================
