@@ -5,7 +5,7 @@ import os
 import sys
 from typing import Iterable
 
-from find_pi import sshconf, tools
+from find_raspi import sshconf, tools
 
 logger = logging.getLogger(os.path.basename(__file__))
 
@@ -74,6 +74,9 @@ def main(argv):
     ssh_conf_prefix = args.ssh_prefix
     retries = args.retries
 
+    if not ssh_conf_prefix:
+        logger.warning("`--ssh-prefix` not provided; will not create ssh.conf entries")
+
     pi_addrs = tools.find_pis(retries)
     pi_addrs = [str(_) for _ in pi_addrs]
 
@@ -84,8 +87,6 @@ def main(argv):
 
     if ssh_conf_prefix:
         add_to_ssh_conf(pi_addrs, ssh_conf_prefix)
-    else:
-        logger.warning("`--ssh-prefix` not provided; will not create ssh.conf entries")
 
 
 if __name__ == '__main__':

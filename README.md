@@ -44,7 +44,7 @@ partition when you frist boot up.
 Locally run the following. This will find and add your Pi to the local ssh config.
 
 ```bash
-./find_pi.py --ssh-prefix=raspberrypi
+./find_raspi.py --ssh-prefix=raspberrypi
 ```
 
 ssh into it,
