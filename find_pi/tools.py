@@ -3,6 +3,7 @@ from ipaddress import ip_network, IPv4Network, ip_address, IPv4Address
 from typing import Optional, Dict, List, Iterable
 
 import nmap3
+import tqdm_thread
 
 
 def get_ip_addr() -> IPv4Address:
@@ -30,7 +31,8 @@ def find_sshable(network: Optional[IPv4Network] = None) -> Dict:
         network = get_network()
 
     nm_scan = nmap3.NmapScanTechniques()
-    return nm_scan.nmap_tcp_scan(network, args="--host-timeout 3 --open -p 22")
+    with tqdm_thread.tqdm_thread(desc="scanning for devices..."):
+        return nm_scan.nmap_tcp_scan(network, args="--host-timeout 3 --open -p 22")
 
 
 def _find_pi() -> Iterable[IPv4Address]:
