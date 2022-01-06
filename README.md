@@ -44,13 +44,21 @@ partition when you frist boot up.
 Locally run the following. This will find and add your Pi to the local ssh config.
 
 ```bash
-./find_raspi.py --ssh-prefix=raspberrypi
+./find_raspi.py --update-ssh-config
 ```
+
+    scanning for devices... 00:12
+    Found 2 Pi's...
+    Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.20'))
+    Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.36'))
+    Pi's will be added to your ssh config as follows
+    raspberrypi.lan-0    192.168.86.20
+    raspberrypi.lan-1    192.168.86.36
 
 ssh into it,
 
 ```bash
-ssh raspberrypi
+ssh raspberrypi.lan-0
 ```
 
 On there, you should [**change your

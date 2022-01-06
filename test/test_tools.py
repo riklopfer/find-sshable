@@ -1,4 +1,4 @@
-from find_raspi import tools
+from find_raspi import net
 
 
 def test_get_network():

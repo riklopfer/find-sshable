@@ -1,3 +1,4 @@
+import dataclasses
 import subprocess
 from ipaddress import ip_network, IPv4Network, ip_address, IPv4Address
 from typing import Optional, Dict, List, Iterable
@@ -35,7 +36,17 @@ def find_sshable(network: Optional[IPv4Network] = None) -> Dict:
         return nm_scan.nmap_tcp_scan(network, args="--host-timeout 3 --open -p 22")
 
 
-def _find_pi() -> Iterable[IPv4Address]:
+@dataclasses.dataclass
+class Host:
+    name: Optional[str]
+    ip: IPv4Address
+
+    @property
+    def ip_str(self):
+        return str(self.ip)
+
+
+def _find_pi() -> Iterable[Host]:
     result = find_sshable()
 
     # pull these guys off
@@ -46,10 +57,10 @@ def _find_pi() -> Iterable[IPv4Address]:
     for ip, data in result.items():
         for hostname in data["hostname"]:
             if 'raspberrypi' in hostname["name"]:
-                yield ip_address(ip)
+                yield Host(name=hostname["name"], ip=ip_address(ip))
 
 
-def find_pis(retries: Optional[int] = 3) -> List[IPv4Address]:
+def find_pis(retries: Optional[int] = 3) -> List[Host]:
     for _ in range(retries):
         pi_addrs = list(_find_pi())
         if pi_addrs:
