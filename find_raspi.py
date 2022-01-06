@@ -3,10 +3,11 @@ import argparse
 import collections
 import logging
 import os
+import shutil
 import sys
 from typing import Iterable, List
 
-from find_raspi import sshconf, net
+from find_raspi import net, sshconf
 
 logger = logging.getLogger(os.path.basename(__file__))
 
@@ -38,24 +39,13 @@ def add_to_ssh_conf(hosts: Iterable[net.Host]):
 
     # add it to your ssh config
     ssh_config_path = os.path.join(os.getenv("HOME", "/"), ".ssh", "config")
+
     if os.path.exists(ssh_config_path):
-        with open(ssh_config_path) as ifp:
-            config = sshconf.SshConfigFile(ifp)
-    else:
-        config = sshconf.empty_ssh_config_file()
+        logger.debug("Made copy of ssh config %s", f"{ssh_config_path}.bak")
+        shutil.copy(ssh_config_path, f"{ssh_config_path}.bak")
 
-    for host in hosts:
-        incumbent = config.host(host.name)
-        ssh_config_kwargs = dict(host=host.name, User="pi", HostName=host.ip_str)
-        logger.info("Updated ssh Host entry for %s", host.name)
-
-        if incumbent:
-            logger.warning("Overwriting ssh config entry: %s", incumbent)
-            config.set(**ssh_config_kwargs)
-        else:
-            config.add(**ssh_config_kwargs)
-
-    config.write(ssh_config_path)
+    host_entries = [sshconf.HostEntry(h.name, User="pi", HostName=h.ip_str) for h in hosts]
+    sshconf.update_rapi_hosts(host_entries, ssh_config_path)
 
 
 def main(argv):
