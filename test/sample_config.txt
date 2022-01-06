@@ -1,10 +1,8 @@
-
 Host xxxx
   HostName 192.32.54.5
 
-
-
 #! managed by find_raspi modify with caution !#
+
 Host raspberrypi.lan-0
     User pi
     HostName 192.168.86.20
