@@ -1,10 +1,14 @@
 import dataclasses
+import logging
 import os
+import shutil
 from typing import Optional, List
 
 SSH_CONFIG_FILE = '~/.ssh/config'
 
 DELIMITER = "#! managed by find_raspi modify with caution !#"
+
+logger = logging.getLogger(os.path.basename(__file__))
 
 
 @dataclasses.dataclass
@@ -73,7 +77,7 @@ def _serialize(entries: List[HostEntry]) -> str:
     return val + DELIMITER + "\n"
 
 
-def get_rapi_hosts(config_path: Optional[str] = None) -> List[HostEntry]:
+def get_raspi_hosts(config_path: Optional[str] = None) -> List[HostEntry]:
     if not config_path:
         config_path = os.path.expanduser(SSH_CONFIG_FILE)
 
@@ -82,9 +86,15 @@ def get_rapi_hosts(config_path: Optional[str] = None) -> List[HostEntry]:
     return _parse(raspi)
 
 
-def update_rapi_hosts(entries: List[HostEntry], config_path: Optional[str] = None):
+def update_raspi_hosts(entries: List[HostEntry],
+                       config_path: Optional[str] = None,
+                       backup: Optional[bool] = True):
     if not config_path:
         config_path = os.path.expanduser(SSH_CONFIG_FILE)
+
+    if backup and os.path.exists(config_path):
+        shutil.copy(config_path, f'{config_path}.bak')
+        logger.debug("Made copy of ssh config %s", f"{config_path}.bak")
 
     raspi, other = _load_config_parts(config_path)
 

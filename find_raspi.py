@@ -40,12 +40,8 @@ def add_to_ssh_conf(hosts: Iterable[net.Host]):
     # add it to your ssh config
     ssh_config_path = os.path.join(os.getenv("HOME", "/"), ".ssh", "config")
 
-    if os.path.exists(ssh_config_path):
-        logger.debug("Made copy of ssh config %s", f"{ssh_config_path}.bak")
-        shutil.copy(ssh_config_path, f"{ssh_config_path}.bak")
-
     host_entries = [sshconf.HostEntry(h.name, User="pi", HostName=h.ip_str) for h in hosts]
-    sshconf.update_rapi_hosts(host_entries, ssh_config_path)
+    sshconf.update_raspi_hosts(host_entries, ssh_config_path)
 
 
 def main(argv):
