@@ -7,10 +7,11 @@ def test_get_network():
 
 
 def test_find_devices():
-    devices = net.find_sshable()
+    devices = net.find_sshable(host_timeout="1ms")
+    print(devices)
     assert devices
 
 
 def test_find_pi():
-    pi_addr = net.find_pis()
+    pi_addr = net.find_pis(host_timeout="1ms")
     print(pi_addr)

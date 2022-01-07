@@ -6,6 +6,8 @@ from typing import Optional, Dict, List, Iterable
 import nmap3
 import tqdm_thread
 
+from find_raspi import tools
+
 
 def get_ip_addr() -> IPv4Address:
     hn = socket.gethostname()
@@ -21,14 +23,19 @@ def get_network() -> IPv4Network:
     return ip_network(net_str)
 
 
-def find_sshable(network: Optional[IPv4Network] = None) -> Dict:
+def find_sshable(network: Optional[IPv4Network] = None, host_timeout: Optional[str] = None) -> Dict:
     """Find devices on given network with port 22 open. If no network is provided, use current network."""
     if network is None:
         network = get_network()
 
+    if host_timeout is None:
+        host_timeout = "3s"
+
+    host_timeout = tools.validate_timeout(host_timeout)
+
     nm_scan = nmap3.NmapScanTechniques()
     with tqdm_thread.tqdm_thread(desc="scanning for devices..."):
-        return nm_scan.nmap_tcp_scan(network, args="--host-timeout 3 --open -p 22")
+        return nm_scan.nmap_tcp_scan(network, args=f"--host-timeout {host_timeout} --open -p 22")
 
 
 @dataclasses.dataclass
@@ -41,8 +48,8 @@ class Host:
         return str(self.ip)
 
 
-def _find_pi() -> Iterable[Host]:
-    result = find_sshable()
+def _find_pi(host_timeout: Optional[str] = None) -> Iterable[Host]:
+    result = find_sshable(host_timeout=host_timeout)
 
     # pull these guys off
     stats = result.pop('stats', None)
@@ -55,10 +62,10 @@ def _find_pi() -> Iterable[Host]:
                 yield Host(name=hostname["name"], ip=ip_address(ip))
 
 
-def find_pis(retries: Optional[int] = 1) -> List[Host]:
+def find_pis(retries: Optional[int] = 1, host_timeout: Optional[str] = None) -> List[Host]:
     assert retries > 0
     for _ in range(retries + 1):
-        pi_addrs = list(_find_pi())
+        pi_addrs = list(_find_pi(host_timeout=host_timeout))
         if pi_addrs:
             return pi_addrs
 
