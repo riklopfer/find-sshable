@@ -1,5 +1,5 @@
 import dataclasses
-import subprocess
+import socket
 from ipaddress import ip_network, IPv4Network, ip_address, IPv4Address
 from typing import Optional, Dict, List, Iterable
 
@@ -8,14 +8,9 @@ import tqdm_thread
 
 
 def get_ip_addr() -> IPv4Address:
-    for dev in ['en0']:
-        proc = subprocess.run(["ipconfig", "getifaddr", dev], capture_output=True)
-        if proc.returncode == 0:
-            ipaddr = proc.stdout.strip()
-            if ipaddr:
-                return ip_address(ipaddr.decode('utf8'))
-
-    raise OSError("Could not find IP address! :(")
+    hn = socket.gethostname()
+    h = socket.gethostbyname(hn)
+    return h
 
 
 def get_network() -> IPv4Network:
