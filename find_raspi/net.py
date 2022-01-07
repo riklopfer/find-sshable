@@ -55,10 +55,11 @@ def _find_pi() -> Iterable[Host]:
                 yield Host(name=hostname["name"], ip=ip_address(ip))
 
 
-def find_pis(retries: Optional[int] = 3) -> List[Host]:
-    for _ in range(retries):
+def find_pis(retries: Optional[int] = 1) -> List[Host]:
+    assert retries > 0
+    for _ in range(retries + 1):
         pi_addrs = list(_find_pi())
         if pi_addrs:
             return pi_addrs
 
-    raise ValueError("Raspberry PI not found!")
+    return []

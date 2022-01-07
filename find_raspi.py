@@ -3,7 +3,6 @@ import argparse
 import collections
 import logging
 import os
-import shutil
 import sys
 from typing import Iterable, List
 
@@ -71,6 +70,8 @@ def main(argv):
         logger.info("`--update-ssh-config` not specified; will not create ssh.conf entries")
 
     pi_addrs = net.find_pis(retries)
+    if not pi_addrs:
+        raise ValueError("Raspberry PI not found!")
 
     print(
         "\nFound {} Pi's...\n"
