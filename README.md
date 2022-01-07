@@ -21,10 +21,16 @@ Setup
     sudo apt-get install nmap
     ```
 
-2. pip requirements
+2. (optional / recommended) create a python virtual env and activate it. 
+3. pip isntall 
 
     ```shell
-    pip install -r requirements.txt
+    pip install find-sshable
+    ```
+4. Run the program
+
+    ```shell
+    find-sshable --help
     ```
 
 Testing
@@ -50,7 +56,7 @@ partition when you frist boot up.
 Locally run the following. This will find and add your Pi to the local ssh config.
 
 ```bash
-./find_sshable.py --host-pattern "raspberrypi" --update-ssh-config --ssh-user "pi"
+find_sshable --host-pattern "raspberrypi" --update-ssh-config --ssh-user "pi"
 ```
 
         scanning for devices... 00:16

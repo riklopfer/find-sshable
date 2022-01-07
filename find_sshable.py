@@ -1,3 +1,6 @@
+"""
+This script is for convenience and testing. 
+"""
 #!/usr/bin/env python3
 import sys
 
