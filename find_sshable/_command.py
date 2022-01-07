@@ -12,25 +12,26 @@ _program_name = "find-sshable"
 logger = logging.getLogger(_program_name)
 
 
-def _update_names(hosts: List[net.Host]) -> List[net.Host]:
+def _update_names(hosts: List[net.Host], host_prefix: str) -> List[net.Host]:
     name_count = collections.Counter()
 
     updated = []
     for host in hosts:
-        updated.append(net.Host(name=f"{host.name}-{name_count[host.name]}", ip=host.ip))
+        updated.append(net.Host(name=f"{host_prefix}{host.name}-{name_count[host.name]}", ip=host.ip))
         name_count[host.name] += 1
 
     return updated
 
 
 def add_to_ssh_conf(hosts: Iterable[net.Host],
-                    ssh_user: Optional[str] = None):
+                    ssh_user: Optional[str] = None,
+                    host_prefix: Optional[str] = 'find-sshable.'):
     if hosts is not None:
         hosts = list(hosts)
 
     assert hosts, "Addrs is empty"
 
-    hosts = _update_names(hosts)
+    hosts = _update_names(hosts, host_prefix)
 
     print(
         "\nDevices will be added to your ssh config as follows\n"
@@ -54,6 +55,9 @@ def main():
     parser.add_argument('--update-ssh-config',
                         help="Update ssh config with entries for the sshable hosts",
                         action='store_true')
+    parser.add_argument('--host-prefix',
+                        help="Prepend this to the each host entry added to ssh config (--update-ssh-config)",
+                        type=str, default='find-sshable.')
     parser.add_argument('--ssh-user',
                         help="User for host entries added to ssh config (--update-ssh-config)",
                         type=str, default=None)
@@ -76,6 +80,7 @@ def main():
     retries = args.retries
     host_pattern = args.host_pattern
     ssh_user = args.ssh_user
+    host_prefix = args.host_prefix
 
     if not update_ssh_conf:
         logger.info("`--update-ssh-config` not specified; will not create ssh.conf entries")
@@ -88,7 +93,7 @@ def main():
         )
 
         if update_ssh_conf:
-            add_to_ssh_conf(pi_addrs, ssh_user=ssh_user)
+            add_to_ssh_conf(pi_addrs, ssh_user=ssh_user, host_prefix=host_prefix)
     else:
         print("No SSH-able devices found.")
 
