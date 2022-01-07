@@ -1,31 +1,38 @@
-Find PI
+Find SSH-able
+=============
+[![Python application](https://github.com/riklopfer/find-sshable/actions/workflows/python-app.yml/badge.svg?branch=main)](https://github.com/riklopfer/find-sshable/actions/workflows/python-app.yml)
+
+Find SSH-able devices on your network and (optionally) add them to you ssh config in a cleanish way. Tested locally with MacOS and runs with Actions on Ubuntu. 
+
+Setup
+=====
+
+1. Install [nmap](https://nmap.org)
+    
+    MacOS
+
+    ```bash
+    brew install nmap
+    ```
+
+    Debian 
+
+    ```shell
+    sudo apt-get install nmap
+    ```
+
+2. pip requirements
+
+    ```shell
+    pip install -r requirements.txt
+    ```
+
+Testing
 =======
 
-Find SSH-able raspberry pi devices on your network.
-
-Requirements
-============
-
-This has only been tested on MacOS, but there is no reason it shouldn't work on \*nix.
-
-nmap
----
-
-```bash
-brew install nmap
-```
-
 ```shell
-sudo apt-get install nmap
-```
-
-etc...
-
-pip requirements
------------
-
-```shell
-pip install -r requirements.txt
+# pip install pytest
+PYTHONPATH=. pytest -vs .
 ```
 
 Headless Raspberry Pi
@@ -43,16 +50,18 @@ partition when you frist boot up.
 Locally run the following. This will find and add your Pi to the local ssh config.
 
 ```bash
-./find_raspi.py --update-ssh-config
+./find_sshable.py --host-pattern "raspberrypi" --update-ssh-config
 ```
 
-    scanning for devices... 00:12
-    Found 2 Pi's...
-    Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.20'))
-    Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.36'))
-    Pi's will be added to your ssh config as follows
-    raspberrypi.lan-0    192.168.86.20
-    raspberrypi.lan-1    192.168.86.36
+        scanning for devices... 00:16
+
+        Found 2 Pi's...
+        Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.20'))
+        Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.36'))
+
+        Pi's will be added to your ssh config as follows
+        raspberrypi.lan-0    192.168.86.20
+        raspberrypi.lan-1    192.168.86.36
 
 ssh into it,
 

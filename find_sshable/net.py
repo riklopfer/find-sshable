@@ -1,4 +1,5 @@
 import dataclasses
+import re
 import socket
 from ipaddress import ip_network, IPv4Network, ip_address, IPv4Address
 from typing import Optional, Dict, List, Iterable
@@ -6,7 +7,7 @@ from typing import Optional, Dict, List, Iterable
 import nmap3
 import tqdm_thread
 
-from find_raspi import tools
+from find_sshable import tools
 
 
 def get_ip_addr() -> IPv4Address:
@@ -48,7 +49,8 @@ class Host:
         return str(self.ip)
 
 
-def _find_pi(host_timeout: Optional[str] = None) -> Iterable[Host]:
+def _find_pi(host_timeout: Optional[str] = None,
+             host_pattern: Optional[re.Pattern] = None) -> Iterable[Host]:
     result = find_sshable(host_timeout=host_timeout)
 
     # pull these guys off
@@ -57,15 +59,19 @@ def _find_pi(host_timeout: Optional[str] = None) -> Iterable[Host]:
 
     # everything left is devices
     for ip, data in result.items():
-        for hostname in data["hostname"]:
-            if 'raspberrypi' in hostname["name"]:
-                yield Host(name=hostname["name"], ip=ip_address(ip))
+        for host_data in data["hostname"]:
+            # if 'raspberrypi' in hostname["name"]:
+            if host_pattern and not host_pattern.search(host_data["name"]):
+                continue
+            yield Host(name=host_data["name"], ip=ip_address(ip))
 
 
-def find_pis(retries: Optional[int] = 1, host_timeout: Optional[str] = None) -> List[Host]:
+def find_hosts(retries: Optional[int] = 1,
+               host_timeout: Optional[str] = None,
+               host_pattern: Optional[re.Pattern] = None) -> List[Host]:
     assert retries > 0
     for _ in range(retries + 1):
-        pi_addrs = list(_find_pi(host_timeout=host_timeout))
+        pi_addrs = list(_find_pi(host_timeout=host_timeout, host_pattern=host_pattern))
         if pi_addrs:
             return pi_addrs
 

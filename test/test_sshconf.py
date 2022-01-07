@@ -1,6 +1,6 @@
 import os.path
 
-from find_raspi import sshconf
+from find_sshable import sshconf
 
 _THIS_LOC = os.path.dirname(os.path.normpath(__file__))
 _SAMPLE_PATH = os.path.join(_THIS_LOC, "sample_config.txt")

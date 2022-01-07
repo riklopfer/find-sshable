@@ -1,7 +1,7 @@
 Host xxxx
   HostName 192.32.54.5
 
-#! managed by find_raspi modify with caution !#
+#! managed by find_sshable modify with caution !#
 
 Host raspberrypi.lan-0
     User pi
@@ -11,4 +11,4 @@ Host raspberrypi.lan-1
     User pi
     HostName 192.168.86.36
 
-#! managed by find_raspi modify with caution !#
+#! managed by find_sshable modify with caution !#

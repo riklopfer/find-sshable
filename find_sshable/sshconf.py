@@ -6,7 +6,7 @@ from typing import Optional, List
 
 SSH_CONFIG_FILE = '~/.ssh/config'
 
-DELIMITER = "#! managed by find_raspi modify with caution !#"
+DELIMITER = "#! managed by find_sshable modify with caution !#"
 
 logger = logging.getLogger(os.path.basename(__file__))
 

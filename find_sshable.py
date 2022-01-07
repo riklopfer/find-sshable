@@ -3,10 +3,11 @@ import argparse
 import collections
 import logging
 import os
+import re
 import sys
 from typing import Iterable, List
 
-from find_raspi import net, sshconf
+from find_sshable import net, sshconf
 
 logger = logging.getLogger(os.path.basename(__file__))
 
@@ -46,12 +47,15 @@ def add_to_ssh_conf(hosts: Iterable[net.Host]):
 def main(argv):
     program_name = os.path.basename(argv[0])
     parser = argparse.ArgumentParser(prog=program_name)
+    parser.add_argument('--host-pattern',
+                        help="Only return hosts whose hostname contain this regex (search not match)",
+                        type=re.compile, default=None)
     parser.add_argument('--update-ssh-config',
-                        help="Update ssh config with entries for the raspberry pi hosts",
+                        help="Update ssh config with entries for the sshable hosts",
                         action='store_true')
     parser.add_argument('--retries', '-r',
-                        help="Number of retries if pi not found immediately",
-                        type=int, default=3)
+                        help="Number of retries if hosts not found immediately",
+                        type=int, default=1)
     parser.add_argument('-v', help="verbosity",
                         action='count', default=0)
 
@@ -65,11 +69,12 @@ def main(argv):
 
     update_ssh_conf = args.update_ssh_config
     retries = args.retries
+    host_pattern = args.host_pattern
 
     if not update_ssh_conf:
         logger.info("`--update-ssh-config` not specified; will not create ssh.conf entries")
 
-    pi_addrs = net.find_pis(retries)
+    pi_addrs = net.find_hosts(retries=retries, host_pattern=host_pattern)
     if not pi_addrs:
         raise ValueError("Raspberry PI not found!")
 

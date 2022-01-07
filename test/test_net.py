@@ -1,6 +1,6 @@
 import json
 
-from find_raspi import net
+from find_sshable import net
 
 
 def test_get_network():
@@ -15,6 +15,6 @@ def test_find_devices():
 
 
 def test_find_pi():
-    pi_devices = net.find_pis(host_timeout="1ms")
+    pi_devices = net.find_hosts(host_timeout="1ms")
     print(f"pi devices: {pi_devices}")
     assert pi_devices is not None
