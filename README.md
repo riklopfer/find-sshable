@@ -50,7 +50,7 @@ partition when you frist boot up.
 Locally run the following. This will find and add your Pi to the local ssh config.
 
 ```bash
-./find_sshable.py --host-pattern "raspberrypi" --update-ssh-config
+./find_sshable.py --host-pattern "raspberrypi" --update-ssh-config --ssh-user "pi"
 ```
 
         scanning for devices... 00:16

@@ -5,7 +5,7 @@ import logging
 import os
 import re
 import sys
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 from find_sshable import net, sshconf
 
@@ -23,7 +23,8 @@ def _update_names(hosts: List[net.Host]) -> List[net.Host]:
     return updated
 
 
-def add_to_ssh_conf(hosts: Iterable[net.Host]):
+def add_to_ssh_conf(hosts: Iterable[net.Host],
+                    ssh_user: Optional[str] = None):
     if hosts is not None:
         hosts = list(hosts)
 
@@ -32,7 +33,7 @@ def add_to_ssh_conf(hosts: Iterable[net.Host]):
     hosts = _update_names(hosts)
 
     print(
-        "\nPi's will be added to your ssh config as follows\n"
+        "\nDevices will be added to your ssh config as follows\n"
         "{}".format("\n".join("\t".join([h.name, str(h.ip)])
                               for h in hosts))
     )
@@ -40,7 +41,7 @@ def add_to_ssh_conf(hosts: Iterable[net.Host]):
     # add it to your ssh config
     ssh_config_path = os.path.join(os.getenv("HOME", "/"), ".ssh", "config")
 
-    host_entries = [sshconf.HostEntry(h.name, User="pi", HostName=h.ip_str) for h in hosts]
+    host_entries = [sshconf.HostEntry(h.name, User=ssh_user, HostName=h.ip_str) for h in hosts]
     sshconf.update_raspi_hosts(host_entries, ssh_config_path)
 
 
@@ -50,9 +51,14 @@ def main(argv):
     parser.add_argument('--host-pattern',
                         help="Only return hosts whose hostname contain this regex (search not match)",
                         type=re.compile, default=None)
+    
     parser.add_argument('--update-ssh-config',
                         help="Update ssh config with entries for the sshable hosts",
                         action='store_true')
+    parser.add_argument('--ssh-user',
+                        help="User for host entries added to ssh config (--update-ssh-config)",
+                        type=str, default=None)
+
     parser.add_argument('--retries', '-r',
                         help="Number of retries if hosts not found immediately",
                         type=int, default=1)
@@ -70,21 +76,22 @@ def main(argv):
     update_ssh_conf = args.update_ssh_config
     retries = args.retries
     host_pattern = args.host_pattern
+    ssh_user = args.ssh_user
 
     if not update_ssh_conf:
         logger.info("`--update-ssh-config` not specified; will not create ssh.conf entries")
 
     pi_addrs = net.find_hosts(retries=retries, host_pattern=host_pattern)
-    if not pi_addrs:
-        raise ValueError("Raspberry PI not found!")
+    if pi_addrs:
+        print(
+            "\nFound {} devices...\n"
+            "{}".format(len(pi_addrs), "\n".join(map(str, pi_addrs)))
+        )
 
-    print(
-        "\nFound {} Pi's...\n"
-        "{}".format(len(pi_addrs), "\n".join(map(str, pi_addrs)))
-    )
-
-    if update_ssh_conf:
-        add_to_ssh_conf(pi_addrs)
+        if update_ssh_conf:
+            add_to_ssh_conf(pi_addrs, ssh_user=ssh_user)
+    else:
+        print("No SSH-able devices found.")
 
 
 if __name__ == '__main__':

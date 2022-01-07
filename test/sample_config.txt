@@ -11,4 +11,10 @@ Host raspberrypi.lan-1
     User pi
     HostName 192.168.86.36
 
+Host raspberrypi.lan-1
+    HostName 192.168.86.36
+
+Host fuzzbot
+    User fb
+
 #! managed by find_sshable modify with caution !#
