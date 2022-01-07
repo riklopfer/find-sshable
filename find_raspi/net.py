@@ -31,7 +31,7 @@ def find_sshable(network: Optional[IPv4Network] = None, host_timeout: Optional[s
     if host_timeout is None:
         host_timeout = "3s"
 
-    host_timeout = tools.validate_timeout(host_timeout)
+    host_timeout = tools.simple_time_spec(host_timeout)
 
     nm_scan = nmap3.NmapScanTechniques()
     with tqdm_thread.tqdm_thread(desc="scanning for devices..."):

@@ -1,9 +1,9 @@
-def validate_timeout(time_str: str) -> str:
-    units = time_str.lstrip("0123456789")
-    if units.startswith('.'):
-        units = units[1:]
-    units = units.lstrip("0123456789")
+import re
 
-    assert not units or units in ('h', 'm', 's', 'ms'), \
-        f"Invalid time string {time_str}"
+_VALID_SIMPLE_TIME = re.compile(r"\d+(:?\.\d+)?(?:h|m|s|ms)")
+
+
+def simple_time_spec(time_str: str) -> str:
+    """"""
+    assert _VALID_SIMPLE_TIME.match(time_str), f"Invalid time string {time_str}"
     return time_str
