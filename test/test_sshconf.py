@@ -10,7 +10,6 @@ def test_load_config_parts():
     raspi, other = sshconf._load_config_parts(_SAMPLE_PATH)
     assert raspi
     assert other
-    print(raspi)
 
 
 def test_load_entries():
