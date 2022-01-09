@@ -48,19 +48,21 @@ def add_to_ssh_conf(hosts: Iterable[net.Host],
 
 def main(argv):
     parser = argparse.ArgumentParser(prog=_program_name)
+
     parser.add_argument('--host-pattern',
                         help="Only return hosts whose hostname contain this regex (search not match)",
                         type=re.compile, default=None)
 
-    parser.add_argument('--update-ssh-config',
-                        help="Update ssh config with entries for the sshable hosts",
-                        action='store_true')
-    parser.add_argument('--host-prefix',
-                        help="Prepend this to the each host entry added to ssh config (--update-ssh-config)",
-                        type=str, default='find-sshable.')
-    parser.add_argument('--ssh-user',
-                        help="User for host entries added to ssh config (--update-ssh-config)",
-                        type=str, default=None)
+    ssh_opt = parser.add_argument_group('SSH Config Options')
+    ssh_opt.add_argument('--update-ssh-config',
+                         help="Update ssh config with entries for the sshable hosts",
+                         action='store_true')
+    ssh_opt.add_argument('--host-prefix',
+                         help="Prepend this to the each host entry added to ssh config (--update-ssh-config)",
+                         type=str, default='find-sshable.')
+    ssh_opt.add_argument('--ssh-user',
+                         help="User for host entries added to ssh config (--update-ssh-config)",
+                         type=str, default=None)
 
     parser.add_argument('-v', help="verbosity",
                         action='count', default=0)
