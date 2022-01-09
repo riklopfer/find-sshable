@@ -4,6 +4,15 @@ Find SSH-able
 
 Find SSH-able devices on your network and (optionally) add them to you ssh config in a cleanish way. Tested locally with MacOS and runs with Actions on Ubuntu. 
 
+Works by stringing together a couple `nmap` commands and updating the ssh config file. 
+
+```shell
+# find open port 22
+nmap -sT -p 22 -T5 <network>
+# check ssh auth methods
+nmap -p 22 --script ssh-auth-methods <target>
+```
+
 Setup
 =====
 
@@ -16,17 +25,24 @@ Setup
     sudo apt-get install nmap
     ```
 
-2. (optional / recommended) create a python virtual env and activate it. 
-3. pip isntall 
+2. Install the script in `$HOME/bin` (hopefully on your path)
 
     ```shell
-    pip install find-sshable
+    ./install.sh
     ```
-4. Run the program
+
+3. Run the program
 
     ```shell
     find-sshable --help
     ```
+
+Python Package
+==============
+
+```shell
+pip install find-sshable
+```
 
 Testing
 =======
