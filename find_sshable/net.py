@@ -24,11 +24,24 @@ def get_network() -> IPv4Network:
     return ip_network(net_str)
 
 
-def find_sshable(network: Optional[IPv4Network] = None, host_timeout: Optional[str] = None) -> Dict:
-    """Find devices on given network with port 22 open. If no network is provided, use current network."""
-    if network is None:
-        network = get_network()
+def is_sshable(target: str) -> bool:
+    nmap = nmap3.Nmap()
 
+    result = nmap.run_command(cmd=f"{nmap.nmaptool} -oX - -p 22 --script ssh-auth-methods {ip_address(target)}".split())
+    et = nmap.get_xml_et(result)
+    try:
+        script_out = et.find("host").find("ports").find("port").find("script").get("output")
+    except AttributeError:
+        return False
+
+    return (
+            "Supported authentication methods:" in script_out and
+            ("publickey" in script_out or "password" in script_out)
+    )
+
+
+def _scan_open_22(host_timeout: Optional[str] = None) -> Dict:
+    """Find devices on current network with port 22 open."""
     if host_timeout is None:
         host_timeout = "3s"
 
@@ -36,7 +49,7 @@ def find_sshable(network: Optional[IPv4Network] = None, host_timeout: Optional[s
 
     nm_scan = nmap3.NmapScanTechniques()
     with tqdm_thread.tqdm_thread(desc="scanning for devices..."):
-        return nm_scan.nmap_tcp_scan(network, args=f"--host-timeout {host_timeout} -T5 --open -p 22")
+        return nm_scan.nmap_tcp_scan(get_network(), args=f"--host-timeout {host_timeout} -T5 --open -p 22")
 
 
 @dataclasses.dataclass
@@ -49,9 +62,10 @@ class Host:
         return str(self.ip)
 
 
-def find_hosts(host_timeout: Optional[str] = None,
-               host_pattern: Optional[re.Pattern] = None) -> List[Host]:
-    result = find_sshable(host_timeout=host_timeout)
+def find_sshable(host_timeout: Optional[str] = None,
+                 host_pattern: Optional[re.Pattern] = None,
+                 intrusive: Optional[bool] = False) -> List[Host]:
+    result = _scan_open_22(host_timeout=host_timeout)
 
     # pull these guys off
     stats = result.pop('stats', None)
@@ -62,6 +76,8 @@ def find_hosts(host_timeout: Optional[str] = None,
     for ip, data in result.items():
         for host_data in data["hostname"]:
             if host_pattern and not host_pattern.search(host_data["name"]):
+                continue
+            if intrusive and not is_sshable(ip):
                 continue
             hosts.append(Host(name=host_data["name"], ip=ip_address(ip)))
     return hosts
