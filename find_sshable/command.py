@@ -17,8 +17,8 @@ def _update_names(hosts: List[net.Host], host_prefix: str) -> List[net.Host]:
 
     updated = []
     for host in hosts:
-        if name_count[host.name]:
-            suffix = "-{name_count[host.name]}"
+        if name_count[host.name] > 0:
+            suffix = f"-{name_count[host.name]}"
         else:
             suffix = ""
         updated.append(net.Host(name=f"{host_prefix}{host.name}{suffix}", ip=host.ip))

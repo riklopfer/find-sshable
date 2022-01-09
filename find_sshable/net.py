@@ -24,10 +24,11 @@ def get_network() -> IPv4Network:
     return ip_network(net_str)
 
 
-def is_sshable(target: str) -> bool:
+def is_sshable(target: str, port: Optional[str] = "22") -> bool:
     nmap = nmap3.Nmap()
 
-    result = nmap.run_command(cmd=f"{nmap.nmaptool} -oX - -p 22 --script ssh-auth-methods {ip_address(target)}".split())
+    result = nmap.run_command(cmd=f"{nmap.nmaptool} -oX - -p {port} "
+                                  f"--script ssh-auth-methods {ip_address(target)}".split())
     et = nmap.get_xml_et(result)
     try:
         script_out = et.find("host").find("ports").find("port").find("script").get("output")
