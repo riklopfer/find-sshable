@@ -70,20 +70,18 @@ Locally run the following. This will find and add your Pi to the local ssh confi
 find-sshable --host-pattern "raspberrypi" --update-ssh-config --ssh-user "pi"
 ```
 
-        scanning for devices... 00:15
+        scanning for devices... 00:07
 
-        Found 2 devices...
-        Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.20'))
+        Found 1 devices...
         Host(name='raspberrypi.lan', ip=IPv4Address('192.168.86.36'))
 
         Devices will be added to your ssh config as follows
-        find-sshable.raspberrypi.lan-0    192.168.86.20
-        find-sshable.raspberrypi.lan-1    192.168.86.36
+        find-sshable.raspberrypi.lan    192.168.86.36
 
 ssh into it,
 
 ```bash
-ssh find-sshable.raspberrypi.lan-0
+ssh find-sshable.raspberrypi.lan
 ```
 
 On there, you should [**change your
