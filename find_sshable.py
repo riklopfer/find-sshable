@@ -4,7 +4,7 @@ This script is for convenience and testing.
 """
 import sys
 
-from find_sshable._command import main
+from find_sshable.command import main
 
 try:
     sys.exit(main())
