@@ -9,12 +9,12 @@ def test_get_network():
 
 
 def test_find_devices():
-    devices = net.find_sshable(host_timeout="1ms")
+    devices = net.find_sshable(host_timeout="1")
     print(f"all ssh-able:\n{json.dumps(devices, indent=2)}")
     assert devices
 
 
 def test_find_pi():
-    pi_devices = net.find_hosts(host_timeout="1ms")
+    pi_devices = net.find_hosts(host_timeout="1")
     print(f"pi devices: {pi_devices}")
     assert pi_devices is not None

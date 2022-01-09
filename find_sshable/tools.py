@@ -1,6 +1,6 @@
 import re
 
-_VALID_SIMPLE_TIME = re.compile(r"\d+(:?\.\d+)?(?:h|m|s|ms)")
+_VALID_SIMPLE_TIME = re.compile(r"\d+(:?\.\d+)?(?:h|m|s|ms)?")
 
 
 def simple_time_spec(time_str: str) -> str:
