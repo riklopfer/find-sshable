@@ -40,7 +40,7 @@ def is_sshable(target: str) -> bool:
     )
 
 
-def _scan_open_22(host_timeout: Optional[str] = None) -> Dict:
+def scan_open_port(host_timeout: Optional[str] = None, port: Optional[str] = "22") -> Dict:
     """Find devices on current network with port 22 open."""
     if host_timeout is None:
         host_timeout = "3s"
@@ -49,7 +49,7 @@ def _scan_open_22(host_timeout: Optional[str] = None) -> Dict:
 
     nm_scan = nmap3.NmapScanTechniques()
     with tqdm_thread.tqdm_thread(desc="scanning for devices..."):
-        return nm_scan.nmap_tcp_scan(get_network(), args=f"--host-timeout {host_timeout} -T5 --open -p 22")
+        return nm_scan.nmap_tcp_scan(get_network(), args=f"--host-timeout {host_timeout} -T5 --open -p {port}")
 
 
 @dataclasses.dataclass
@@ -65,7 +65,7 @@ class Host:
 def find_sshable(host_timeout: Optional[str] = None,
                  host_pattern: Optional[re.Pattern] = None,
                  intrusive: Optional[bool] = False) -> List[Host]:
-    result = _scan_open_22(host_timeout=host_timeout)
+    result = scan_open_port(host_timeout=host_timeout)
 
     # pull these guys off
     stats = result.pop('stats', None)
