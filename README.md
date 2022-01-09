@@ -8,16 +8,11 @@ Setup
 =====
 
 1. Install [nmap](https://nmap.org)
-    
-    MacOS
-
-    ```bash
-    brew install nmap
-    ```
-
-    Debian 
 
     ```shell
+    # MacOS
+    brew install nmap
+    # Debian
     sudo apt-get install nmap
     ```
 
