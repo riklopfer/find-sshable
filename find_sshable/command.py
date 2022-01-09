@@ -17,7 +17,11 @@ def _update_names(hosts: List[net.Host], host_prefix: str) -> List[net.Host]:
 
     updated = []
     for host in hosts:
-        updated.append(net.Host(name=f"{host_prefix}{host.name}-{name_count[host.name]}", ip=host.ip))
+        if name_count[host.name]:
+            suffix = "-{name_count[host.name]}"
+        else:
+            suffix = ""
+        updated.append(net.Host(name=f"{host_prefix}{host.name}{suffix}", ip=host.ip))
         name_count[host.name] += 1
 
     return updated
@@ -43,7 +47,7 @@ def add_to_ssh_conf(hosts: Iterable[net.Host],
     ssh_config_path = os.path.join(os.getenv("HOME", "/"), ".ssh", "config")
 
     host_entries = [sshconf.HostEntry(h.name, User=ssh_user, HostName=h.ip_str) for h in hosts]
-    sshconf.update_raspi_hosts(host_entries, ssh_config_path)
+    sshconf.update_found_hosts(host_entries, ssh_config_path)
 
 
 def main(argv):

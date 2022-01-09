@@ -27,7 +27,7 @@ class HostEntry:
         return val
 
 
-def _load_raspi(ifp) -> str:
+def _load_found(ifp) -> str:
     contents = ""
     for line in ifp:
         if line.startswith(DELIMITER):
@@ -36,15 +36,15 @@ def _load_raspi(ifp) -> str:
 
 
 def _load_config_parts(path: str) -> (str, str):
-    raspi, other = "", ""
+    found, other = "", ""
     if os.path.exists(path):
         with open(path, 'r', encoding='utf8') as ifp:
             for line in ifp:
                 if line.startswith(DELIMITER):
-                    raspi = _load_raspi(ifp)
+                    found = _load_found(ifp)
                 else:
                     other += line
-    return raspi.strip(), other.strip()
+    return found.strip(), other.strip()
 
 
 def _parse(string: str) -> List[HostEntry]:
@@ -77,16 +77,16 @@ def _serialize(entries: List[HostEntry]) -> str:
     return val + DELIMITER + "\n"
 
 
-def get_raspi_hosts(config_path: Optional[str] = None) -> List[HostEntry]:
+def get_found_hosts(config_path: Optional[str] = None) -> List[HostEntry]:
     if not config_path:
         config_path = os.path.expanduser(SSH_CONFIG_FILE)
 
-    raspi, other = _load_config_parts(config_path)
+    found, other = _load_config_parts(config_path)
 
-    return _parse(raspi)
+    return _parse(found)
 
 
-def update_raspi_hosts(entries: List[HostEntry],
+def update_found_hosts(entries: List[HostEntry],
                        config_path: Optional[str] = None,
                        backup: Optional[bool] = True):
     if not config_path:
@@ -96,7 +96,7 @@ def update_raspi_hosts(entries: List[HostEntry],
         shutil.copy(config_path, f'{config_path}.bak')
         logger.debug("Made copy of ssh config %s", f"{config_path}.bak")
 
-    raspi, other = _load_config_parts(config_path)
+    found, other = _load_config_parts(config_path)
 
     with open(config_path, 'w', encoding='utf8') as ofp:
         ofp.write(other)
