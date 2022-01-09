@@ -64,7 +64,7 @@ class Host:
 
 def find_sshable(host_timeout: Optional[str] = None,
                  host_pattern: Optional[re.Pattern] = None,
-                 intrusive: Optional[bool] = False) -> List[Host]:
+                 passive: Optional[bool] = False) -> List[Host]:
     result = scan_open_port(host_timeout=host_timeout)
 
     # pull these guys off
@@ -77,7 +77,7 @@ def find_sshable(host_timeout: Optional[str] = None,
         for host_data in data["hostname"]:
             if host_pattern and not host_pattern.search(host_data["name"]):
                 continue
-            if intrusive and not is_sshable(ip):
+            if not passive and not is_sshable(ip):
                 continue
             hosts.append(Host(name=host_data["name"], ip=ip_address(ip)))
     return hosts
