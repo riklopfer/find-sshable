@@ -2,7 +2,7 @@ import dataclasses
 import re
 import socket
 from ipaddress import ip_network, IPv4Network, ip_address, IPv4Address
-from typing import Optional, Dict, List, Iterable
+from typing import Optional, Dict, List
 
 import nmap3
 import tqdm_thread
@@ -36,7 +36,7 @@ def find_sshable(network: Optional[IPv4Network] = None, host_timeout: Optional[s
 
     nm_scan = nmap3.NmapScanTechniques()
     with tqdm_thread.tqdm_thread(desc="scanning for devices..."):
-        return nm_scan.nmap_tcp_scan(network, args=f"--host-timeout {host_timeout} --open -p 22")
+        return nm_scan.nmap_tcp_scan(network, args=f"--host-timeout {host_timeout} -T5 --open -p 22")
 
 
 @dataclasses.dataclass
@@ -49,8 +49,8 @@ class Host:
         return str(self.ip)
 
 
-def _find_pi(host_timeout: Optional[str] = None,
-             host_pattern: Optional[re.Pattern] = None) -> Iterable[Host]:
+def find_hosts(host_timeout: Optional[str] = None,
+               host_pattern: Optional[re.Pattern] = None) -> List[Host]:
     result = find_sshable(host_timeout=host_timeout)
 
     # pull these guys off
@@ -58,21 +58,10 @@ def _find_pi(host_timeout: Optional[str] = None,
     runtime = result.pop('runtime', None)
 
     # everything left is devices
+    hosts = []
     for ip, data in result.items():
         for host_data in data["hostname"]:
-            # if 'raspberrypi' in hostname["name"]:
             if host_pattern and not host_pattern.search(host_data["name"]):
                 continue
-            yield Host(name=host_data["name"], ip=ip_address(ip))
-
-
-def find_hosts(retries: Optional[int] = 1,
-               host_timeout: Optional[str] = None,
-               host_pattern: Optional[re.Pattern] = None) -> List[Host]:
-    assert retries > 0
-    for _ in range(retries + 1):
-        pi_addrs = list(_find_pi(host_timeout=host_timeout, host_pattern=host_pattern))
-        if pi_addrs:
-            return pi_addrs
-
-    return []
+            hosts.append(Host(name=host_data["name"], ip=ip_address(ip)))
+    return hosts
