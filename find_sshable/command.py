@@ -97,11 +97,11 @@ def main(argv):
 
 
 def main_no_args():
-    main(sys.argv)
+    try:
+        main(sys.argv)
+    except KeyboardInterrupt:
+        return 1
 
 
 if __name__ == '__main__':
-    try:
-        sys.exit(main_no_args())
-    except KeyboardInterrupt:
-        sys.exit(1)
+    sys.exit(main_no_args())
