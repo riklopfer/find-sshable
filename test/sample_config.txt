@@ -1,7 +1,7 @@
 Host xxxx
   HostName 192.32.54.5
 
-#! managed by find_sshable modify with caution !#
+#! managed by find_sshable; this section may be overwritten !#
 
 Host raspberrypi.lan-0
     User pi
@@ -17,4 +17,4 @@ Host raspberrypi.lan-1
 Host fuzzbot
     User fb
 
-#! managed by find_sshable modify with caution !#
+#! managed by find_sshable; this section may be overwritten !#

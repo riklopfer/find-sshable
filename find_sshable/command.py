@@ -52,6 +52,9 @@ def main(argv):
     parser.add_argument('--host-pattern',
                         help="Only return hosts whose hostname contain this regex (search not match)",
                         type=re.compile, default=None)
+    parser.add_argument('--passive',
+                        help="Do not check for ssh auth methods -- just an open port",
+                        action='store_true')
 
     ssh_opt = parser.add_argument_group('SSH Config Options')
     ssh_opt.add_argument('--update-ssh-config',
@@ -79,11 +82,12 @@ def main(argv):
     host_pattern = args.host_pattern
     ssh_user = args.ssh_user
     host_prefix = args.host_prefix
+    passive = args.passive
 
     if not update_ssh_conf:
         logger.info("`--update-ssh-config` not specified; will not create ssh.conf entries")
 
-    pi_addrs = net.find_hosts(host_pattern=host_pattern)
+    pi_addrs = net.find_sshable(host_pattern=host_pattern, passive=passive)
     if pi_addrs:
         print(
             "\nFound {} devices...\n"
