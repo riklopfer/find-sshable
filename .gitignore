@@ -1,5 +1,6 @@
 .idea
 test/sample_config.txt.bak
+.DS_Store
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
