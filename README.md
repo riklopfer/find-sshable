@@ -25,10 +25,10 @@ Setup
     sudo apt-get install nmap
     ```
 
-2. Install the script in `$HOME/bin` (hopefully on your path)
+2. Install the script (defaults to `$HOME/bin` but can be overridden with first arg)
 
     ```shell
-    ./install.sh
+    ./install.sh $HOME/bin
     ```
 
 3. Run the program
