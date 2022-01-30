@@ -30,7 +30,7 @@ Setup
     ```shell
     ./install.sh $HOME/bin
     # or net install style (installed in $HOME/bin)
-    curl -o - https://raw.githubusercontent.com/riklopfer/find-sshable/0.2.3/install.sh | bash
+    curl -o - https://raw.githubusercontent.com/riklopfer/find-sshable/main/install.sh | bash
     ```
 
 3. Run the program
